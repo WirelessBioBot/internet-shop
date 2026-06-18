@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="container order-success-page">
+        <section class="order-success-card">
+            <h1>Заказ успешно оформлен</h1>
+            <p class="order-success-lead">Спасибо, <%= order.contactName %>! Ваш заказ принят в обработку.</p>
+
+            <dl class="order-success-details">
+                <dt>Номер заказа</dt>
+                <dd>#<%= order.id %></dd>
+                <dt>Сумма</dt>
+                <dd><%= order.totalAmount.toLocaleString('ru-RU') %> ₽</dd>
+                <dt>Способ оплаты</dt>
+                <dd><%= paymentLabel %></dd>
+                <dt>Статус</dt>
+                <dd>Ожидает оплаты</dd>
+            </dl>
+
+            <div class="profile-actions">
+                <a href="/" class="btn-primary">На главную</a>
+                <a href="/profile" class="btn-secondary">В профиль</a>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

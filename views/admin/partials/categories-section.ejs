@@ -1,0 +1,63 @@
+<section class="admin-section" id="categories">
+    <div class="admin-section__head">
+        <h2>Категории</h2>
+        <a href="/admin/categories/new" class="btn-admin-primary">Добавить категорию</a>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table admin-table--categories">
+            <thead>
+                <tr>
+                    <th>Иконка</th>
+                    <th>Название</th>
+                    <th>Родитель</th>
+                    <th>Товаров</th>
+                    <th>Подкатегорий</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (adminCategories.length) { %>
+                    <% adminCategories.forEach(function(category) { %>
+                        <tr>
+                            <td>
+                                <img
+                                    src="<%= category.image %>"
+                                    alt=""
+                                    class="admin-category-thumb"
+                                    width="40"
+                                    height="40"
+                                    loading="lazy"
+                                    onerror="this.onerror=null;this.src='/images/placeholder.svg'"
+                                >
+                            </td>
+                            <td><strong><%= category.name %></strong></td>
+                            <td><%= category.parentName || '—' %></td>
+                            <td><%= category.productsCount %></td>
+                            <td><%= category.childrenCount %></td>
+                            <td class="admin-table-actions">
+                                <a href="/admin/categories/<%= category.id %>/edit" class="btn-admin-sm btn-admin-sm--ghost">Изменить</a>
+                                <% if (category.canDelete) { %>
+                                    <form
+                                        action="/admin/categories/<%= category.id %>/delete"
+                                        method="POST"
+                                        class="admin-delete-form"
+                                        onsubmit="return confirm('Удалить категорию «<%= category.name %>»?')"
+                                    >
+                                        <button type="submit" class="btn-admin-sm btn-admin-sm--danger">Удалить</button>
+                                    </form>
+                                <% } else { %>
+                                    <span class="admin-readonly-note" title="Есть товары или подкатегории">Нельзя удалить</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="admin-empty">Категорий пока нет</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</section>

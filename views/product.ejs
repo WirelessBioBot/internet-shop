@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="product-page container">
+        <% if (flash && flash.type !== 'success') { %>
+            <div class="alert alert-<%= flash.type %>" role="alert">
+                <%= flash.message %>
+            </div>
+        <% } %>
+
+        <nav class="breadcrumb" aria-label="Навигация">
+            <a href="/">Главная</a>
+            <span>/</span>
+            <% if (product.category) { %>
+                <a href="/catalog?category=<%= product.category.id %>"><%= product.category.name %></a>
+                <span>/</span>
+            <% } %>
+            <span><%= product.name %></span>
+        </nav>
+
+        <section class="product-main">
+            <div class="product-gallery">
+                <div class="gallery-main">
+                    <img
+                        src="<%= product.images[0] %>"
+                        alt="<%= product.name %>"
+                    >
+                </div>
+            </div>
+
+            <div class="product-summary">
+                <h1><%= product.name %></h1>
+
+                <% if (product.category) { %>
+                    <p class="product-meta">Категория: <%= product.category.name %></p>
+                <% } %>
+
+                <div class="product-rating" aria-label="Рейтинг <%= product.rating %> из 5">
+                    <span class="rating-value"><%= product.rating.toFixed(1) %></span>
+                    <span class="rating-stars">
+                        <% for (let i = 1; i <= 5; i++) { %>
+                            <span class="star<%= i <= Math.round(product.rating) ? ' filled' : '' %>">★</span>
+                        <% } %>
+                    </span>
+                    <a href="#reviews" class="rating-count">(<%= reviews.length %> <%= ruPlural(reviews.length, ['отзыв', 'отзыва', 'отзывов']) %>)</a>
+                </div>
+
+                <p class="product-price"><%= product.price.toLocaleString('ru-RU') %> ₽</p>
+
+                <p class="product-stock <%= product.inStock ? 'in-stock' : 'out-of-stock' %>">
+                    <%= product.inStock ? 'В наличии' : 'Нет в наличии' %>
+                </p>
+
+                <% if (product.customSpecs.length) { %>
+                    <ul class="product-specs-preview">
+                        <% product.customSpecs.forEach(function(spec) { %>
+                            <li>
+                                <span class="product-specs-preview__label"><%= spec.label %></span>
+                                <span class="product-specs-preview__value"><%= spec.value %></span>
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } %>
+
+                <div class="product-actions">
+                    <form
+                        class="add-to-cart-form"
+                        action="/product/<%= product.id %>/cart"
+                        method="POST"
+                    >
+                        <label for="quantity" class="quantity-label">Количество</label>
+                        <div class="quantity-row">
+                            <div class="quantity-control">
+                                <button
+                                    type="button"
+                                    class="quantity-btn"
+                                    data-quantity-action="decrease"
+                                    aria-label="Уменьшить количество"
+                                    <%= product.inStock ? '' : 'disabled' %>
+                                >−</button>
+                                <input
+                                    type="number"
+                                    id="quantity"
+                                    class="quantity-input"
+                                    name="quantity"
+                                    min="1"
+                                    max="<%= product.stockQuantity %>"
+                                    value="1"
+                                    <%= product.inStock ? '' : 'disabled' %>
+                                    required
+                                >
+                                <button
+                                    type="button"
+                                    class="quantity-btn"
+                                    data-quantity-action="increase"
+                                    aria-label="Увеличить количество"
+                                    <%= product.inStock ? '' : 'disabled' %>
+                                >+</button>
+                            </div>
+                            <button
+                                type="submit"
+                                class="btn-primary"
+                                <%= product.inStock && isLoggedIn ? '' : 'disabled' %>
+                            >
+                                Добавить в корзину
+                            </button>
+                        </div>
+                    </form>
+
+                    <% if (isLoggedIn) { %>
+                        <form
+                            class="favorite-form"
+                            action="/product/<%= product.id %>/favorite"
+                            method="POST"
+                        >
+                            <input type="hidden" name="returnUrl" value="/product/<%= product.id %>">
+                            <button
+                                type="submit"
+                                class="btn-favorite<%= isFavorite ? ' is-active' : '' %>"
+                                aria-pressed="<%= isFavorite ? 'true' : 'false' %>"
+                            >
+                                <span class="btn-favorite__icon" aria-hidden="true"><%= isFavorite ? '♥' : '♡' %></span>
+                                <span class="btn-favorite__label"><%= isFavorite ? 'В избранном' : 'В избранное' %></span>
+                            </button>
+                        </form>
+                    <% } %>
+                </div>
+
+                <% if (!isLoggedIn) { %>
+                    <p class="form-hint">Для добавления в корзину и избранное <a href="/login?returnUrl=/product/<%= product.id %>">войдите в аккаунт</a>.</p>
+                <% } else if (!product.inStock) { %>
+                    <p class="form-hint">Товар временно недоступен для заказа.</p>
+                <% } %>
+            </div>
+        </section>
+
+        <section class="product-details">
+            <h2>Описание</h2>
+            <p class="product-description"><%= product.description %></p>
+
+            <h2>Характеристики</h2>
+            <div class="specs-tables">
+            <% if (product.customSpecs.length) { %>
+                <table class="specs-table">
+                    <tbody>
+                        <% product.customSpecs.forEach(function(spec) { %>
+                            <tr>
+                                <th scope="row"><%= spec.label %></th>
+                                <td><%= spec.value %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } %>
+
+            <h3 class="specs-subtitle">Общая информация</h3>
+            <table class="specs-table">
+                <tbody>
+                    <% product.specs.slice(product.customSpecs.length).forEach(function(spec) { %>
+                        <tr>
+                            <th scope="row"><%= spec.label %></th>
+                            <td><%= spec.value %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            </div>
+        </section>
+
+        <section class="product-reviews" id="reviews">
+            <h2 class="product-reviews__title">Отзывы покупателей</h2>
+
+            <% if (flash) { %>
+                <div class="alert alert-<%= flash.type %>" role="alert"><%= flash.message %></div>
+            <% } %>
+
+            <% if (!isLoggedIn) { %>
+                <p class="review-form-hint">
+                    Чтобы оставить отзыв, <a href="/login?returnUrl=/product/<%= product.id %>#reviews">войдите в аккаунт</a>.
+                </p>
+            <% } else if (!reviewForm.canReview) { %>
+                <p class="review-form-hint">Отзыв можно оставить после покупки и оплаты товара.</p>
+            <% } else { %>
+                <div class="review-form-card">
+                    <h3 class="review-form-card__title">
+                        <%= reviewForm.hasReview ? 'Ваш отзыв' : 'Оставить отзыв' %>
+                    </h3>
+                    <% if (reviewForm.hasReview) { %>
+                        <p class="review-form-card__subtitle">Вы можете изменить оценку и комментарий.</p>
+                    <% } %>
+
+                    <form
+                        class="review-form"
+                        action="/product/<%= product.id %>/review"
+                        method="POST"
+                        data-review-form
+                        novalidate
+                    >
+                        <div class="form-group review-rating-field">
+                            <span class="review-rating-field__label" id="rating-label">Оценка</span>
+                            <div
+                                class="review-rating-input"
+                                role="radiogroup"
+                                aria-labelledby="rating-label"
+                                data-rating-input
+                            >
+                                <input
+                                    type="hidden"
+                                    name="rating"
+                                    id="rating"
+                                    value="<%= reviewForm.review ? reviewForm.review.rating : '' %>"
+                                    required
+                                >
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <button
+                                        type="button"
+                                        class="star-btn<%= reviewForm.review && i <= reviewForm.review.rating ? ' is-active' : '' %>"
+                                        data-rating="<%= i %>"
+                                        aria-label="<%= i %> из 5"
+                                        aria-pressed="<%= reviewForm.review && i <= reviewForm.review.rating ? 'true' : 'false' %>"
+                                    >★</button>
+                                <% } %>
+                            </div>
+                            <span class="field-error" data-rating-error hidden>Выберите оценку от 1 до 5</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment" class="review-comment-label">Комментарий (необязательно)</label>
+                            <textarea
+                                id="comment"
+                                name="comment"
+                                class="review-comment-input"
+                                rows="4"
+                                maxlength="<%= maxCommentLength %>"
+                                placeholder="Расскажите о своём опыте использования товара"
+                            ><%= reviewForm.review ? reviewForm.review.comment : '' %></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <%= reviewForm.hasReview ? 'Сохранить изменения' : 'Отправить отзыв' %>
+                        </button>
+                    </form>
+                </div>
+            <% } %>
+
+            <% if (reviews.length) { %>
+                <p class="product-reviews__count"><%= reviews.length %> <%= ruPlural(reviews.length, ['отзыв', 'отзыва', 'отзывов']) %></p>
+                <div class="reviews-list">
+                    <% reviews.forEach(function(review) { %>
+                        <article class="review-card<%= review.isOwn ? ' review-card--own' : '' %>">
+                            <header class="review-header">
+                                <strong>
+                                    <%= review.authorName %>
+                                    <% if (review.isOwn) { %>
+                                        <span class="review-own-badge">Ваш отзыв</span>
+                                    <% } %>
+                                </strong>
+                                <span class="review-rating" aria-label="Оценка <%= review.rating %>">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <span class="star<%= i <= review.rating ? ' filled' : '' %>">★</span>
+                                    <% } %>
+                                </span>
+                                <time datetime=""><%= review.createdAt %></time>
+                            </header>
+                            <% if (review.comment) { %>
+                                <p class="review-comment"><%= review.comment %></p>
+                            <% } %>
+                        </article>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-message">Пока нет отзывов. Будьте первым, кто оценит этот товар.</p>
+            <% } %>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/product.js"></script>
+</body>
+</html>

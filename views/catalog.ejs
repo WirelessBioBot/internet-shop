@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="categories-page">
+        <div class="container categories-page__header">
+            <nav class="breadcrumb" aria-label="Навигация">
+                <a href="/">Главная</a>
+                <span>/</span>
+                <% if (activeCategory) { %>
+                    <a href="/catalog">Каталог</a>
+                    <span>/</span>
+                    <span><%= activeCategory.name %></span>
+                <% } else { %>
+                    <span>Каталог</span>
+                <% } %>
+            </nav>
+
+            <header class="categories-page__title-block">
+                <h1><%= activeCategory ? activeCategory.name : 'Каталог' %></h1>
+                <p class="categories-page__count">
+                    <%= totalCount %>
+                    <%= ruPlural(totalCount, ['товар', 'товара', 'товаров']) %>
+                </p>
+            </header>
+        </div>
+
+        <div class="container categories-page__layout">
+            <aside class="categories-filters" aria-label="Фильтры каталога">
+                <form class="categories-filters__form" action="/catalog" method="GET">
+                    <h2 class="categories-filters__heading">Фильтры</h2>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Поиск</span>
+                        <input
+                            type="search"
+                            name="q"
+                            value="<%= filters.q %>"
+                            placeholder="Название, бренд..."
+                            autocomplete="off"
+                        >
+                    </label>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Категория</span>
+                        <select name="category">
+                            <option value="all" <%= filters.category === 'all' ? 'selected' : '' %>>Все категории</option>
+                            <% filterCategories.forEach(function(item) { %>
+                                <option
+                                    value="<%= item.id %>"
+                                    <%= String(filters.category) === String(item.id) ? 'selected' : '' %>
+                                >
+                                    <%= item.name %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </label>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Бренд</span>
+                        <select name="brand">
+                            <option value="all" <%= filters.brand === 'all' ? 'selected' : '' %>>Все бренды</option>
+                            <% brands.forEach(function(brand) { %>
+                                <option
+                                    value="<%= brand %>"
+                                    <%= filters.brand === brand ? 'selected' : '' %>
+                                >
+                                    <%= brand %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </label>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Наличие</span>
+                        <select name="stock">
+                            <option value="all" <%= filters.stock === 'all' ? 'selected' : '' %>>Все</option>
+                            <option value="in_stock" <%= filters.stock === 'in_stock' ? 'selected' : '' %>>В наличии</option>
+                        </select>
+                    </label>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Сортировка</span>
+                        <select name="sort">
+                            <option value="rating_desc" <%= filters.sort === 'rating_desc' ? 'selected' : '' %>>По рейтингу</option>
+                            <option value="name_asc" <%= filters.sort === 'name_asc' ? 'selected' : '' %>>По названию (А–Я)</option>
+                            <option value="name_desc" <%= filters.sort === 'name_desc' ? 'selected' : '' %>>По названию (Я–А)</option>
+                            <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Сначала дешевле</option>
+                            <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Сначала дороже</option>
+                        </select>
+                    </label>
+
+                    <div class="categories-filters__actions">
+                        <button type="submit" class="btn btn-primary">Применить</button>
+                        <% if (hasActiveFilters) { %>
+                            <a href="/catalog" class="btn btn-secondary">Сбросить</a>
+                        <% } %>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="categories-page__results" aria-label="Список товаров">
+                <% if (products.length) { %>
+                    <div class="products-grid">
+                        <% products.forEach(function(product) { %>
+                            <%- include('partials/product-card', { product: product }) %>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="empty-message">
+                        <% if (hasActiveFilters) { %>
+                            По выбранным фильтрам товары не найдены. <a href="/catalog">Сбросить фильтры</a>
+                        <% } else { %>
+                            Товары пока не добавлены.
+                        <% } %>
+                    </p>
+                <% } %>
+            </section>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/categories.js"></script>
+</body>
+</html>

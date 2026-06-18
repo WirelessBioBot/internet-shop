@@ -1,0 +1,125 @@
+<section class="admin-section" id="orders">
+    <div class="admin-section__head">
+        <h2>Заказы</h2>
+        <span class="admin-section__count"><%= activeOrders.length %> активных</span>
+    </div>
+
+    <form method="GET" action="/admin#orders" class="admin-filters">
+        <%- include('filter-hidden', { filters: filters, section: 'order' }) %>
+        <div class="admin-filters__grid">
+            <div class="admin-filters__field">
+                <label for="order_q">Поиск</label>
+                <input
+                    type="search"
+                    id="order_q"
+                    name="order_q"
+                    value="<%= filters.orderQ %>"
+                    placeholder="№, имя или email клиента"
+                >
+            </div>
+            <div class="admin-filters__field">
+                <label for="order_status">Статус заказа</label>
+                <select id="order_status" name="order_status">
+                    <option value="">Все активные</option>
+                    <% orderStatuses.forEach(function(status) { %>
+                        <option value="<%= status %>" <%= filters.orderStatus === status ? 'selected' : '' %>>
+                            <%= orderStatusLabels[status] %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="admin-filters__field">
+                <label for="order_payment">Оплата</label>
+                <select id="order_payment" name="order_payment">
+                    <option value="">Любая</option>
+                    <% paymentStatuses.forEach(function(status) { %>
+                        <option value="<%= status %>" <%= filters.orderPayment === status ? 'selected' : '' %>>
+                            <%= paymentStatusLabels[status] %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+        </div>
+        <div class="admin-filters__actions">
+            <button type="submit" class="btn-admin-sm">Применить</button>
+            <a href="<%= orderResetUrl %>" class="btn-admin-sm btn-admin-sm--ghost">Сбросить</a>
+        </div>
+    </form>
+
+    <h3 class="admin-subsection-title">Текущие заказы</h3>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Клиент</th>
+                    <th>Сумма</th>
+                    <th>Статус</th>
+                    <th>Оплата</th>
+                    <th>Дата</th>
+                    <th>Управление</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (activeOrders.length) { %>
+                    <% activeOrders.forEach(function(order) { %>
+                        <%- include('order-row', {
+                            order: order,
+                            editable: true,
+                            orderStatuses: orderStatuses,
+                            paymentStatuses: paymentStatuses,
+                            orderStatusLabels: orderStatusLabels,
+                            paymentStatusLabels: paymentStatusLabels
+                        }) %>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" class="admin-empty">Активных заказов не найдено</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <details class="admin-collapse" id="completed-orders">
+        <summary class="admin-collapse__summary">
+            <span>Завершённые заказы</span>
+            <span class="admin-section__count"><%= completedOrders.length %></span>
+        </summary>
+        <div class="admin-collapse__body">
+            <div class="admin-table-wrap">
+                <table class="admin-table admin-table--completed">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Клиент</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                            <th>Оплата</th>
+                            <th>Дата</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (completedOrders.length) { %>
+                            <% completedOrders.forEach(function(order) { %>
+                                <%- include('order-row', {
+                                    order: order,
+                                    editable: false,
+                                    orderStatuses: orderStatuses,
+                                    paymentStatuses: paymentStatuses,
+                                    orderStatusLabels: orderStatusLabels,
+                                    paymentStatusLabels: paymentStatusLabels
+                                }) %>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" class="admin-empty">Завершённых заказов не найдено</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </details>
+</section>

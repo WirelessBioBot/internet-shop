@@ -1,0 +1,14 @@
+<% if (section !== 'order') { %>
+    <% if (filters.orderQ) { %><input type="hidden" name="order_q" value="<%= filters.orderQ %>"><% } %>
+    <% if (filters.orderStatus) { %><input type="hidden" name="order_status" value="<%= filters.orderStatus %>"><% } %>
+    <% if (filters.orderPayment) { %><input type="hidden" name="order_payment" value="<%= filters.orderPayment %>"><% } %>
+<% } %>
+<% if (section !== 'product') { %>
+    <% if (filters.productQ) { %><input type="hidden" name="product_q" value="<%= filters.productQ %>"><% } %>
+    <% if (filters.productCategory) { %><input type="hidden" name="product_category" value="<%= filters.productCategory %>"><% } %>
+    <% if (filters.productStock) { %><input type="hidden" name="product_stock" value="<%= filters.productStock %>"><% } %>
+<% } %>
+<% if (section !== 'user') { %>
+    <% if (filters.userQ) { %><input type="hidden" name="user_q" value="<%= filters.userQ %>"><% } %>
+    <% if (filters.userRole) { %><input type="hidden" name="user_role" value="<%= filters.userRole %>"><% } %>
+<% } %>

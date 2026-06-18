@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('../partials/head', { extraCss: '/css/admin.css' }) %>
+</head>
+<body class="admin-body">
+
+    <%- include('../partials/admin-sidebar', { activeNav: typeof activeNav !== 'undefined' ? activeNav : 'overview' }) %>
+
+    <div class="admin-main">
+        <header class="admin-header">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Меню">☰</button>
+            <h1>Панель управления</h1>
+            <p class="admin-header__user">Администратор: <%= typeof userName !== 'undefined' ? userName : 'Admin' %></p>
+        </header>
+
+        <% if (flash) { %>
+            <div class="alert alert-<%= flash.type %>" role="alert"><%= flash.message %></div>
+        <% } %>
+
+        <section class="admin-stats" aria-label="Статистика">
+            <article class="stat-card stat-card--users">
+                <h2><%= stats.usersCount %></h2>
+                <p>Пользователей</p>
+            </article>
+            <article class="stat-card stat-card--products">
+                <h2><%= stats.productsCount %></h2>
+                <p>Товаров в каталоге</p>
+            </article>
+            <article class="stat-card stat-card--orders">
+                <h2><%= stats.ordersCount %></h2>
+                <p>Заказов всего</p>
+            </article>
+            <article class="stat-card stat-card--revenue">
+                <h2><%= stats.totalRevenue.toLocaleString('ru-RU') %> ₽</h2>
+                <p>Общая выручка</p>
+            </article>
+            <article class="stat-card stat-card--pending">
+                <h2><%= stats.pendingOrdersCount %></h2>
+                <p>Новых заказов</p>
+            </article>
+            <article class="stat-card stat-card--stock">
+                <h2><%= stats.lowStockCount %></h2>
+                <p>Товаров с низким остатком</p>
+            </article>
+        </section>
+
+        <%- include('partials/categories-section', { adminCategories: adminCategories }) %>
+
+        <%- include('partials/products-section', {
+            products: products,
+            categories: categories,
+            filters: filters,
+            productResetUrl: productResetUrl
+        }) %>
+
+        <%- include('partials/orders-section', {
+            activeOrders: activeOrders,
+            completedOrders: completedOrders,
+            filters: filters,
+            orderResetUrl: orderResetUrl,
+            orderStatuses: orderStatuses,
+            paymentStatuses: paymentStatuses,
+            orderStatusLabels: orderStatusLabels,
+            paymentStatusLabels: paymentStatusLabels
+        }) %>
+
+        <%- include('partials/users-section', {
+            users: users,
+            filters: filters,
+            userResetUrl: userResetUrl
+        }) %>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

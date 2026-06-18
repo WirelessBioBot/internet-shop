@@ -1,0 +1,60 @@
+<header class="header">
+    <div class="container header-container">
+        <div class="header-row header-row--top">
+            <a href="/" class="logo" aria-label="На главную">
+                <span class="logo__icon" aria-hidden="true"></span>
+                <span class="logo__text"><%= typeof siteName !== 'undefined' ? siteName : 'Магазин' %></span>
+            </a>
+
+            <form class="search-form" action="/" method="GET" role="search">
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Поиск..."
+                    value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                    aria-label="Поиск товаров"
+                >
+                <button type="submit" class="btn-search" aria-label="Найти">
+                    <span class="btn-search__label">Найти</span>
+                </button>
+            </form>
+
+            <div class="header-auth">
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                    <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+                        <a href="/admin" class="header-auth__link nav-admin">Админ</a>
+                    <% } %>
+                    <a href="/profile" class="header-auth__link">Профиль</a>
+                    <a href="/logout" class="header-auth__link header-auth__link--logout">Выйти</a>
+                <% } else { %>
+                    <a href="/login" class="header-auth__link">Вход</a>
+                    <a href="/register" class="header-auth__link header-auth__link--cta">Регистрация</a>
+                <% } %>
+            </div>
+
+            <a href="/cart" class="btn-cart btn-cart--header" aria-label="Корзина">
+                <span class="btn-cart__icon" aria-hidden="true"></span>
+                <span class="btn-cart__label">Корзина</span>
+                <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                    <span class="cart-badge"><%= cartCount %></span>
+                <% } %>
+            </a>
+        </div>
+
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/categories">Категории</a>
+            <a href="/catalog">Каталог</a>
+            <a href="/#recommendations"><%= typeof isLoggedIn !== 'undefined' && isLoggedIn ? 'Для вас' : 'Часто выбирают' %></a>
+            <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                <a href="/favorites">Избранное</a>
+            <% } %>
+        </nav>
+    </div>
+</header>
+
+<a href="/cart" class="cart-fab" aria-label="Корзина">
+    <span class="cart-fab__icon" aria-hidden="true"></span>
+    <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+        <span class="cart-fab__badge"><%= cartCount %></span>
+    <% } %>
+</a>

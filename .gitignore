@@ -1,0 +1,59 @@
+# Зависимости Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Переменные окружения и секреты
+.env
+.env.*
+!.env.example
+!.env*.example
+recommendation-service/.env
+
+# Python (сервис рекомендаций)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Логи и временные файлы
+logs/
+*.log
+tmp/
+temp/
+.cache/
+
+# ОС и редакторы
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Docker (локальные переопределения и данные)
+docker-compose.override.yml
+postgres_data/
+
+# Сборки и артефакты
+coverage/
+.nyc_output/
+*.tsbuildinfo

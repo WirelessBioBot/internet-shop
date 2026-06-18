@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main>
+        <% if (searchQuery) { %>
+            <section class="search-results container">
+                <h2>Результаты поиска: «<%= searchQuery %>»</h2>
+
+                <% if (searchResults.length) { %>
+                    <div class="products-grid">
+                        <% searchResults.forEach(function(product) { %>
+                            <%- include('partials/product-card', { product: product }) %>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="empty-message">По вашему запросу ничего не найдено.</p>
+                <% } %>
+            </section>
+        <% } else { %>
+            <section class="hero">
+                <div class="container hero-content">
+                    <h1>Техника и гаджеты с подбором именно для вас</h1>
+                    <p><%= typeof siteTagline !== 'undefined' ? siteTagline : 'Умные рекомендации на основе ваших интересов' %></p>
+                </div>
+            </section>
+        <% } %>
+
+        <section class="categories container" id="categories">
+            <h2 class="section-title">Категории</h2>
+
+            <div class="categories-grid">
+                <% categories.forEach(function(category) { %>
+                    <a href="/catalog?category=<%= category.id %>" class="category-card">
+                        <h3><%= category.name %></h3>
+                        <img src="<%= category.image %>" alt="" loading="lazy" decoding="async">
+                    </a>
+                <% }) %>
+            </div>
+        </section>
+
+        <section class="products container" id="popular">
+            <h2 class="section-title">Популярные товары</h2>
+
+            <% if (products.length) { %>
+                <div class="products-grid">
+                    <% products.forEach(function(product) { %>
+                        <%- include('partials/product-card', { product: product }) %>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-message">Популярные товары появятся после наполнения каталога.</p>
+            <% } %>
+        </section>
+
+        <section class="recommendations container" id="recommendations">
+            <h2 class="section-title"><%= recommendationsTitle %></h2>
+
+            <% if (recommendations.length) { %>
+                <div class="products-grid">
+                    <% recommendations.forEach(function(product) { %>
+                        <%- include('partials/product-card', { product: product }) %>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-message"><%= recommendationsEmptyMessage %></p>
+            <% } %>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

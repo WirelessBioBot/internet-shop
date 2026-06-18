@@ -1,0 +1,33 @@
+{
+  "name": "internet-shop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "db:seed": "node scripts/seed.js",
+    "db:sync-ratings": "node scripts/sync-ratings.js",
+    "db:migrate-specs": "node scripts/migrate-product-specs.js",
+    "db:migrate-password-reset": "node scripts/migrate-password-reset.js",
+    "db:populate-catalog": "node scripts/generate-product-svgs.js && node scripts/populate-catalog.js",
+    "db:migrate-favorites": "node scripts/migrate-favorites.js",
+    "db:fix-images": "node scripts/fix-product-images.js",
+    "recommendation": "cd recommendation-service && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
+    "ejs": "^5.0.2",
+    "express": "^5.2.1",
+    "express-session": "^1.18.1",
+    "nodemailer": "^9.0.0",
+    "pg": "^8.16.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
+  }
+}

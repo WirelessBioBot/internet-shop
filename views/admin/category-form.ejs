@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('../partials/head', { extraCss: '/css/admin.css' }) %>
+</head>
+<body class="admin-body">
+
+    <%- include('../partials/admin-sidebar', { activeNav: 'categories' }) %>
+
+    <div class="admin-main">
+        <header class="admin-header">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Меню">☰</button>
+            <h1><%= isEdit ? 'Редактирование категории' : 'Новая категория' %></h1>
+            <a href="/admin#categories" class="btn-admin-sm btn-admin-sm--ghost">← К списку</a>
+        </header>
+
+        <% if (errors.form) { %>
+            <div class="alert alert-error" role="alert"><%= errors.form %></div>
+        <% } %>
+
+        <section class="admin-form-card">
+            <form
+                class="admin-product-form"
+                action="<%= isEdit ? '/admin/categories/' + categoryId : '/admin/categories' %>"
+                method="POST"
+                novalidate
+            >
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--full<%= errors.name ? ' has-error' : '' %>">
+                        <label for="category_name">Название</label>
+                        <input
+                            type="text"
+                            id="category_name"
+                            name="name"
+                            value="<%= values.name %>"
+                            required
+                            maxlength="100"
+                            placeholder="Например: Смартфоны"
+                        >
+                        <% if (errors.name) { %><span class="field-error"><%= errors.name %></span><% } %>
+                    </div>
+
+                    <div class="form-group form-group--full<%= errors.parent_id ? ' has-error' : '' %>">
+                        <label for="parent_id">Родительская категория</label>
+                        <select id="parent_id" name="parent_id">
+                            <option value="">Без родителя (корневая)</option>
+                            <% parentCategories.forEach(function(category) { %>
+                                <option
+                                    value="<%= category.id %>"
+                                    <%= String(values.parent_id || '') === String(category.id) ? 'selected' : '' %>
+                                ><%= category.name %></option>
+                            <% }) %>
+                        </select>
+                        <p class="form-hint">Необязательно. Используйте для группировки подкатегорий.</p>
+                        <% if (errors.parent_id) { %><span class="field-error"><%= errors.parent_id %></span><% } %>
+                    </div>
+                </div>
+
+                <div class="admin-form-actions">
+                    <button type="submit" class="btn-admin-primary"><%= isEdit ? 'Сохранить' : 'Создать категорию' %></button>
+                    <a href="/admin#categories" class="btn-admin-sm btn-admin-sm--ghost">Отмена</a>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+Запуск проекта
+node app.js
+
+Инициализация проекта -> создание package.json
+npm init -y
+
+Установка зависимостей
+npm install ...
+
+Автоматический перезапуск
+nppm install -D nodemon
+
+"scripts": {
+  "dev": "nodemon app.js"
+}
+
+npm run dev
+
+
+Таблицы БД
+1. Users
+2. Products
+3. Categories
+4. Product_Images
+5. Cart
+6. Cart_Items
+7. Orders
+8. Orders_Items
+9. Payments
+10. Shipments
+11. Reviews
+12. User_Actions
+13. Recomendations
+14. Search_History

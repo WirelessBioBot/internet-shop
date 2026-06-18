@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="categories-page">
+        <div class="container categories-page__header">
+            <nav class="breadcrumb" aria-label="Навигация">
+                <a href="/">Главная</a>
+                <span>/</span>
+                <span>Категории</span>
+            </nav>
+
+            <header class="categories-page__title-block">
+                <h1>Категории</h1>
+                <p class="categories-page__count">
+                    <%= totalCount %>
+                    <%= ruPlural(totalCount, ['категория', 'категории', 'категорий']) %>
+                </p>
+            </header>
+        </div>
+
+        <div class="container categories-page__layout">
+            <aside class="categories-filters" aria-label="Фильтры категорий">
+                <form class="categories-filters__form" action="/categories" method="GET">
+                    <h2 class="categories-filters__heading">Фильтры</h2>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Поиск</span>
+                        <input
+                            type="search"
+                            name="q"
+                            value="<%= filters.q %>"
+                            placeholder="Название категории..."
+                            autocomplete="off"
+                        >
+                    </label>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Наличие товаров</span>
+                        <select name="stock">
+                            <option value="all" <%= filters.stock === 'all' ? 'selected' : '' %>>Все</option>
+                            <option value="with_products" <%= filters.stock === 'with_products' ? 'selected' : '' %>>С товарами</option>
+                        </select>
+                    </label>
+
+                    <label class="categories-filters__field">
+                        <span class="categories-filters__label">Сортировка</span>
+                        <select name="sort">
+                            <option value="name_asc" <%= filters.sort === 'name_asc' ? 'selected' : '' %>>По названию (А–Я)</option>
+                            <option value="name_desc" <%= filters.sort === 'name_desc' ? 'selected' : '' %>>По названию (Я–А)</option>
+                            <option value="products_desc" <%= filters.sort === 'products_desc' ? 'selected' : '' %>>Больше товаров</option>
+                            <option value="products_asc" <%= filters.sort === 'products_asc' ? 'selected' : '' %>>Меньше товаров</option>
+                        </select>
+                    </label>
+
+                    <div class="categories-filters__actions">
+                        <button type="submit" class="btn btn-primary">Применить</button>
+                        <% if (hasActiveFilters) { %>
+                            <a href="/categories" class="btn btn-secondary">Сбросить</a>
+                        <% } %>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="categories-page__results" aria-label="Список категорий">
+                <% if (categories.length) { %>
+                    <div class="categories-grid">
+                        <% categories.forEach(function(category) { %>
+                            <a href="/catalog?category=<%= category.id %>" class="category-card">
+                                <h3><%= category.name %></h3>
+                                <% if (category.parentName) { %>
+                                    <p class="category-card__meta">в категории «<%= category.parentName %>»</p>
+                                <% } %>
+                                <p class="category-card__count">
+                                    <%= category.productsCount %>
+                                    <%= ruPlural(category.productsCount, ['товар', 'товара', 'товаров']) %>
+                                </p>
+                                <img src="<%= category.image %>" alt="" loading="lazy" decoding="async">
+                            </a>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="empty-message">
+                        <% if (hasActiveFilters) { %>
+                            По выбранным фильтрам категории не найдены. <a href="/categories">Сбросить фильтры</a>
+                        <% } else { %>
+                            Категории пока не добавлены.
+                        <% } %>
+                    </p>
+                <% } %>
+            </section>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/categories.js"></script>
+</body>
+</html>

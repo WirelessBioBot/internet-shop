@@ -1,0 +1,15 @@
+<aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar__brand">
+        <span class="logo__icon" aria-hidden="true"></span>
+        <a href="/admin">Панель управления</a>
+    </div>
+
+    <nav class="admin-sidebar__nav" aria-label="Административная навигация">
+        <a href="/admin" class="admin-nav-link<%= typeof activeNav === 'undefined' || activeNav === 'overview' ? ' is-active' : '' %>">Обзор</a>
+        <a href="/admin#categories" class="admin-nav-link<%= activeNav === 'categories' ? ' is-active' : '' %>">Категории</a>
+        <a href="/admin#products" class="admin-nav-link<%= activeNav === 'products' ? ' is-active' : '' %>">Товары</a>
+        <a href="/admin#orders" class="admin-nav-link<%= activeNav === 'orders' ? ' is-active' : '' %>">Заказы</a>
+        <a href="/admin#users" class="admin-nav-link<%= activeNav === 'users' ? ' is-active' : '' %>">Пользователи</a>
+        <a href="/logout" class="admin-nav-link admin-nav-link--logout">Выйти</a>
+    </nav>
+</aside>

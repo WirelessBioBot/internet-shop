@@ -1,0 +1,71 @@
+<section class="admin-section" id="users">
+    <div class="admin-section__head">
+        <h2>Пользователи</h2>
+        <span class="admin-section__count"><%= users.length %></span>
+    </div>
+
+    <form method="GET" action="/admin#users" class="admin-filters">
+        <%- include('filter-hidden', { filters: filters, section: 'user' }) %>
+        <div class="admin-filters__grid admin-filters__grid--2">
+            <div class="admin-filters__field">
+                <label for="user_q">Поиск</label>
+                <input
+                    type="search"
+                    id="user_q"
+                    name="user_q"
+                    value="<%= filters.userQ %>"
+                    placeholder="Имя, email или телефон"
+                >
+            </div>
+            <div class="admin-filters__field">
+                <label for="user_role">Роль</label>
+                <select id="user_role" name="user_role">
+                    <option value="">Все роли</option>
+                    <option value="user" <%= filters.userRole === 'user' ? 'selected' : '' %>>user</option>
+                    <option value="admin" <%= filters.userRole === 'admin' ? 'selected' : '' %>>admin</option>
+                </select>
+            </div>
+        </div>
+        <div class="admin-filters__actions">
+            <button type="submit" class="btn-admin-sm">Применить</button>
+            <a href="<%= userResetUrl %>" class="btn-admin-sm btn-admin-sm--ghost">Сбросить</a>
+        </div>
+    </form>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Имя</th>
+                    <th>Email</th>
+                    <th>Телефон</th>
+                    <th>Роль</th>
+                    <th>Регистрация</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (users.length) { %>
+                    <% users.forEach(function(user) { %>
+                        <tr>
+                            <td><%= user.id %></td>
+                            <td><%= user.name %></td>
+                            <td><%= user.email %></td>
+                            <td><%= user.phone %></td>
+                            <td>
+                                <span class="badge <%= user.role === 'admin' ? 'badge-admin' : 'badge-user' %>">
+                                    <%= user.role %>
+                                </span>
+                            </td>
+                            <td><%= user.createdAt %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="admin-empty">Пользователи не найдены</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</section>

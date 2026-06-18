@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="auth-page container">
+        <section class="auth-card">
+            <h1>Регистрация</h1>
+
+            <form class="auth-form" action="/register" method="POST" data-auth-form="register" novalidate>
+                <div class="form-group<%= errors.name ? ' has-error' : '' %>">
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="<%= values.name %>"
+                        placeholder="Имя пользователя"
+                        autocomplete="name"
+                        aria-label="Имя пользователя"
+                        required
+                        maxlength="100"
+                    >
+                    <% if (errors.name) { %>
+                        <span class="field-error"><%= errors.name %></span>
+                    <% } %>
+                </div>
+
+                <div class="form-group<%= errors.email ? ' has-error' : '' %>">
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="<%= values.email %>"
+                        placeholder="Email"
+                        autocomplete="email"
+                        aria-label="Email"
+                        required
+                        maxlength="255"
+                    >
+                    <% if (errors.email) { %>
+                        <span class="field-error"><%= errors.email %></span>
+                    <% } %>
+                </div>
+
+                <div class="form-group<%= errors.password ? ' has-error' : '' %>">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Пароль (минимум 8 символов, буквы и цифры)"
+                        autocomplete="new-password"
+                        aria-label="Пароль"
+                        required
+                        minlength="8"
+                        maxlength="128"
+                    >
+                    <% if (errors.password) { %>
+                        <span class="field-error"><%= errors.password %></span>
+                    <% } %>
+                </div>
+
+                <div class="form-group<%= errors.passwordConfirm ? ' has-error' : '' %>">
+                    <input
+                        type="password"
+                        id="password_confirm"
+                        name="password_confirm"
+                        placeholder="Подтверждение пароля"
+                        autocomplete="new-password"
+                        aria-label="Подтверждение пароля"
+                        required
+                        minlength="8"
+                        maxlength="128"
+                    >
+                    <% if (errors.passwordConfirm) { %>
+                        <span class="field-error"><%= errors.passwordConfirm %></span>
+                    <% } %>
+                </div>
+
+                <button type="submit" class="btn-primary btn-full">Зарегистрироваться</button>
+            </form>
+
+            <p class="auth-footer">
+                Уже есть аккаунт? <a href="/login">Войти</a>
+            </p>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/auth-validation.js"></script>
+    <script src="/js/register.js"></script>
+</body>
+</html>

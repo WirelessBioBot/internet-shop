@@ -1,0 +1,29 @@
+<div class="product-card">
+    <a href="/product/<%= product.id %>" class="product-card__image-link">
+        <img
+            src="<%= product.image || '/images/placeholder.svg' %>"
+            alt="<%= product.title %>"
+            width="300"
+            height="230"
+            loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null;this.src='/images/placeholder.svg'"
+        >
+    </a>
+
+    <div class="product-info">
+        <h3>
+            <a href="/product/<%= product.id %>"><%= product.title %></a>
+        </h3>
+
+        <% if (product.category) { %>
+            <p class="product-category"><%= product.category %></p>
+        <% } %>
+
+        <p class="price"><%= product.price.toLocaleString('ru-RU') %> ₽</p>
+
+        <a href="/product/<%= product.id %>" class="btn-secondary">
+            К товару
+        </a>
+    </div>
+</div>

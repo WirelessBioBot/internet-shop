@@ -1,0 +1,21 @@
+{
+  "description": "Тестовый набор для leave-one-out оценки рекомендательной системы ElectroMarket. Соответствует seed-данным магазина (demo user=1, anna=2). Товары разрешаются по имени из каталога БД.",
+  "k_values": [4, 8],
+  "interactions": [
+    {"user_id": 1, "product_name": "iPhone 15", "action_type": "view"},
+    {"user_id": 1, "product_name": "iPhone 15", "action_type": "click"},
+    {"user_id": 1, "product_name": "Samsung Galaxy S24", "action_type": "view"},
+    {"user_id": 1, "product_name": "AirPods Pro", "action_type": "favorite"},
+    {"user_id": 1, "product_name": "Sony WH-1000XM5", "action_type": "favorite"},
+    {"user_id": 1, "product_name": "MacBook Pro 14", "action_type": "view"},
+    {"user_id": 1, "product_name": "PlayStation 5", "action_type": "view"},
+    {"user_id": 2, "product_name": "iPhone 15", "action_type": "purchase"},
+    {"user_id": 2, "product_name": "AirPods Pro", "action_type": "purchase"},
+    {"user_id": 2, "product_name": "AirPods Pro", "action_type": "view"},
+    {"user_id": 2, "product_name": "PlayStation 5", "action_type": "add_to_cart"},
+    {"user_id": 2, "product_name": "Samsung Galaxy S24", "action_type": "view"},
+    {"user_id": 2, "product_name": "Xbox Series X", "action_type": "view"},
+    {"user_id": 2, "product_name": "iPad Pro 12.9", "action_type": "favorite"}
+  ],
+  "orders": []
+}

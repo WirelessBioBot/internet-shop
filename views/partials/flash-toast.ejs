@@ -1,0 +1,6 @@
+<% if (typeof flash !== 'undefined' && flash && flash.type === 'success') { %>
+    <div class="flash-toast flash-toast--success" role="status" aria-live="polite">
+        <span class="flash-toast__message"><%= flash.message %></span>
+        <button type="button" class="flash-toast__close" aria-label="Закрыть">×</button>
+    </div>
+<% } %>

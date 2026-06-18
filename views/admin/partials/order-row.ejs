@@ -1,0 +1,39 @@
+<tr>
+    <td>#<%= order.id %></td>
+    <td>
+        <strong><%= order.customerName %></strong><br>
+        <small><%= order.customerEmail %></small>
+    </td>
+    <td><%= order.totalAmount.toLocaleString('ru-RU') %> ₽</td>
+    <td><span class="badge badge-order-<%= order.status %>"><%= order.statusLabel %></span></td>
+    <td><span class="badge badge-pay-<%= order.paymentStatus %>"><%= order.paymentStatusLabel %></span></td>
+    <td><%= order.createdAt %></td>
+    <% if (editable) { %>
+        <td class="admin-actions">
+            <form action="/admin/orders/<%= order.id %>/status" method="POST" class="admin-inline-form">
+                <select name="status" aria-label="Статус заказа <%= order.id %>">
+                    <% orderStatuses.forEach(function(status) { %>
+                        <option value="<%= status %>" <%= order.status === status ? 'selected' : '' %>>
+                            <%= orderStatusLabels[status] %>
+                        </option>
+                    <% }) %>
+                </select>
+                <button type="submit" class="btn-admin-sm">OK</button>
+            </form>
+            <form action="/admin/orders/<%= order.id %>/payment" method="POST" class="admin-inline-form">
+                <select name="payment_status" aria-label="Оплата заказа <%= order.id %>">
+                    <% paymentStatuses.forEach(function(status) { %>
+                        <option value="<%= status %>" <%= order.paymentStatus === status ? 'selected' : '' %>>
+                            <%= paymentStatusLabels[status] %>
+                        </option>
+                    <% }) %>
+                </select>
+                <button type="submit" class="btn-admin-sm">OK</button>
+            </form>
+        </td>
+    <% } else { %>
+        <td class="admin-table-actions">
+            <span class="admin-readonly-note">Архив</span>
+        </td>
+    <% } %>
+</tr>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="cart-page">
+        <div class="container">
+            <h1>Корзина</h1>
+
+            <% if (typeof flash !== 'undefined' && flash && flash.type !== 'success') { %>
+                <div class="alert alert-<%= flash.type %>" role="alert"><%= flash.message %></div>
+            <% } %>
+
+            <% if (items.length) { %>
+                <div class="cart-layout" data-cart-layout>
+                    <div class="cart-list">
+                        <% items.forEach(function(item) { %>
+                            <article
+                                class="cart-item<%= item.isRemoved ? ' cart-item--removed' : '' %>"
+                                data-cart-item
+                                data-item-id="<%= item.id %>"
+                                data-price="<%= item.price %>"
+                                data-stock="<%= item.stockQuantity %>"
+                            >
+                                <a href="/product/<%= item.productId %>" class="cart-item__image-link">
+                                    <img src="<%= item.image %>" alt="<%= item.name %>" loading="lazy">
+                                </a>
+
+                                <div class="cart-item__body">
+                                    <div class="cart-item__top">
+                                        <div class="cart-item-info">
+                                            <h3>
+                                                <a href="/product/<%= item.productId %>"><%= item.name %></a>
+                                            </h3>
+                                            <p class="cart-item__price"><%= item.price.toLocaleString('ru-RU') %> ₽ за шт.</p>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            class="cart-item__remove"
+                                            data-cart-remove
+                                            aria-label="Удалить из корзины"
+                                        >×</button>
+                                    </div>
+
+                                    <div class="cart-item__controls">
+                                        <div class="cart-item__quantity-block" data-quantity-block>
+                                            <span class="cart-item__quantity-label">Количество</span>
+                                            <div class="quantity-control quantity-control--compact">
+                                                <button
+                                                    type="button"
+                                                    class="quantity-btn"
+                                                    data-quantity-action="decrease"
+                                                    aria-label="Уменьшить количество"
+                                                >−</button>
+                                                <input
+                                                    type="number"
+                                                    class="quantity-input"
+                                                    min="0"
+                                                    max="<%= item.stockQuantity %>"
+                                                    value="<%= item.quantity %>"
+                                                    aria-label="Количество"
+                                                >
+                                                <button
+                                                    type="button"
+                                                    class="quantity-btn"
+                                                    data-quantity-action="increase"
+                                                    aria-label="Увеличить количество"
+                                                >+</button>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            class="cart-item__restore"
+                                            data-cart-restore
+                                            hidden
+                                        >Вернуть удалённый товар</button>
+
+                                        <p class="cart-item-total">
+                                            <span class="cart-item-total__label">Сумма</span>
+                                            <strong data-item-subtotal><%= item.subtotal.toLocaleString('ru-RU') %> ₽</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }) %>
+                    </div>
+
+                    <aside class="cart-summary">
+                        <h2 class="cart-summary__title">Ваш заказ</h2>
+                        <div class="cart-summary__row">
+                            <span>Товаров</span>
+                            <span data-cart-active-quantity><%= activeQuantity %> шт.</span>
+                        </div>
+                        <div class="cart-summary__row cart-summary__row--total">
+                            <span>Итого</span>
+                            <strong data-cart-total><%= total.toLocaleString('ru-RU') %> ₽</strong>
+                        </div>
+                        <a
+                            href="/checkout"
+                            class="btn-primary btn-full cart-checkout-btn<%= activeQuantity ? '' : ' is-disabled' %>"
+                            data-cart-checkout
+                            <%= activeQuantity ? '' : 'aria-disabled="true" tabindex="-1"' %>
+                        >Оформить заказ</a>
+                        <a href="/" class="cart-summary__continue">Продолжить покупки</a>
+                    </aside>
+                </div>
+            <% } else { %>
+                <p class="empty-message cart-empty">Корзина пуста. <a href="/">Перейти к покупкам</a></p>
+            <% } %>
+        </div>
+
+        <section class="recommendations container cart-recommendations">
+            <h2 class="section-title">Рекомендуем вам</h2>
+
+            <% if (recommendations.length) { %>
+                <div class="products-grid">
+                    <% recommendations.forEach(function(product) { %>
+                        <%- include('partials/product-card', { product: product }) %>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-message">Рекомендации появятся после активности в магазине.</p>
+            <% } %>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/cart.js"></script>
+</body>
+</html>

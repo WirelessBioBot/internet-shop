@@ -1,0 +1,40 @@
+                    <div class="form-group form-group--full admin-specs-group<%= errors.specs ? ' has-error' : '' %>">
+                        <div class="admin-specs-head">
+                            <label>Дополнительные характеристики</label>
+                            <button type="button" class="btn-admin-sm btn-admin-sm--ghost" id="add-spec-row">+ Добавить</button>
+                        </div>
+                        <p class="form-hint">Произвольные параметры товара: экран, память, процессор и т.д. Отображаются на странице товара.</p>
+
+                        <div class="admin-specs-list" id="admin-specs-list">
+                            <% const specRows = values.specs && values.specs.length ? values.specs : [{ name: '', value: '' }]; %>
+                            <% specRows.forEach(function(spec) { %>
+                                <div class="admin-spec-row">
+                                    <input
+                                        type="text"
+                                        name="spec_name[]"
+                                        value="<%= spec.name %>"
+                                        placeholder="Название"
+                                        maxlength="100"
+                                    >
+                                    <input
+                                        type="text"
+                                        name="spec_value[]"
+                                        value="<%= spec.value %>"
+                                        placeholder="Значение"
+                                        maxlength="255"
+                                    >
+                                    <button type="button" class="btn-admin-sm btn-admin-sm--danger admin-spec-remove" aria-label="Удалить характеристику">×</button>
+                                </div>
+                            <% }) %>
+                        </div>
+
+                        <template id="admin-spec-row-template">
+                            <div class="admin-spec-row">
+                                <input type="text" name="spec_name[]" placeholder="Название" maxlength="100">
+                                <input type="text" name="spec_value[]" placeholder="Значение" maxlength="255">
+                                <button type="button" class="btn-admin-sm btn-admin-sm--danger admin-spec-remove" aria-label="Удалить характеристику">×</button>
+                            </div>
+                        </template>
+
+                        <% if (errors.specs) { %><span class="field-error"><%= errors.specs %></span><% } %>
+                    </div>

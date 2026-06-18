@@ -1,0 +1,17 @@
+<footer class="footer">
+    <div class="container footer__inner">
+        <div class="footer__brand">
+            <span class="logo__icon logo__icon--footer" aria-hidden="true"></span>
+            <p class="footer__name"><%= typeof siteName !== 'undefined' ? siteName : 'Магазин' %></p>
+            <p class="footer__tagline"><%= typeof siteTagline !== 'undefined' ? siteTagline : 'Интернет-магазин электроники' %></p>
+        </div>
+        <div class="footer__links">
+            <a href="/categories">Категории</a>
+            <a href="/cart">Корзина</a>
+            <a href="/login">Вход</a>
+        </div>
+        <p class="footer__copy">© <%= new Date().getFullYear() %> <%= typeof siteName !== 'undefined' ? siteName : 'Магазин' %>. Все права защищены.</p>
+    </div>
+</footer>
+<%- include('flash-toast') %>
+<script src="/js/flash-toast.js"></script>

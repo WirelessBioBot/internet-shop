@@ -1,0 +1,24 @@
+<article class="recommendation-card">
+    <a href="/product/<%= product.id %>" class="recommendation-card__image">
+        <img
+            src="<%= product.image || '/images/placeholder.svg' %>"
+            alt="<%= product.title %>"
+            loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null;this.src='/images/placeholder.svg'"
+        >
+    </a>
+    <div class="recommendation-card__body">
+        <% if (product.brand) { %>
+            <span class="recommendation-card__brand"><%= product.brand %></span>
+        <% } %>
+        <h3><a href="/product/<%= product.id %>"><%= product.title %></a></h3>
+        <% if (product.category) { %>
+            <p class="recommendation-card__category"><%= product.category %></p>
+        <% } %>
+        <div class="recommendation-card__footer">
+            <p class="recommendation-card__price"><%= product.price.toLocaleString('ru-RU') %> ₽</p>
+            <a href="/product/<%= product.id %>" class="recommendation-card__link">Подробнее</a>
+        </div>
+    </div>
+</article>

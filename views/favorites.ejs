@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="categories-page">
+        <div class="container categories-page__header">
+            <nav class="breadcrumb" aria-label="Навигация">
+                <a href="/">Главная</a>
+                <span>/</span>
+                <span>Избранное</span>
+            </nav>
+
+            <header class="categories-page__title-block">
+                <h1>Избранное</h1>
+                <p class="categories-page__count">
+                    <%= products.length %>
+                    <%= ruPlural(products.length, ['товар', 'товара', 'товаров']) %>
+                </p>
+            </header>
+        </div>
+
+        <section class="container favorites-page__results" aria-label="Избранные товары">
+            <% if (products.length) { %>
+                <div class="products-grid">
+                    <% products.forEach(function(product) { %>
+                        <div class="favorites-item">
+                            <%- include('partials/product-card', { product: product }) %>
+                            <form
+                                class="favorite-form favorite-form--card"
+                                action="/product/<%= product.id %>/favorite"
+                                method="POST"
+                            >
+                                <input type="hidden" name="returnUrl" value="/favorites">
+                                <button type="submit" class="btn-favorite is-active" aria-label="Удалить из избранного">
+                                    <span class="btn-favorite__icon" aria-hidden="true">♥</span>
+                                </button>
+                            </form>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-message">
+                    В избранном пока нет товаров. <a href="/catalog">Перейти в каталог</a>
+                </p>
+            <% } %>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

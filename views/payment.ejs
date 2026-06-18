@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="container payment-page">
+        <header class="page-head">
+            <div>
+                <span class="section-label">Безопасная оплата</span>
+                <h1>Оплата заказа #<%= order.id %></h1>
+                <p class="page-head__desc"><%= paymentLabel %> · <%= order.amount.toLocaleString('ru-RU') %> ₽</p>
+            </div>
+        </header>
+
+        <% if (flash) { %>
+            <div class="alert alert-<%= flash.type %>" role="alert"><%= flash.message %></div>
+        <% } %>
+
+        <% if (errors.form) { %>
+            <div class="alert alert-error" role="alert"><%= errors.form %></div>
+        <% } %>
+
+        <div class="payment-layout">
+            <section class="payment-panel payment-panel--form">
+                <% if (order.paymentMethod === 'card') { %>
+                    <h2>Данные карты</h2>
+                    <form class="payment-form" action="/payment/<%= order.id %>" method="POST" novalidate>
+                        <div class="form-group<%= errors.card_number ? ' has-error' : '' %>">
+                            <label for="card_number">Номер карты</label>
+                            <input
+                                type="text"
+                                id="card_number"
+                                name="card_number"
+                                value="<%= values.card_number %>"
+                                placeholder="0000 0000 0000 0000"
+                                inputmode="numeric"
+                                autocomplete="cc-number"
+                                maxlength="19"
+                                required
+                            >
+                            <% if (errors.card_number) { %><span class="field-error"><%= errors.card_number %></span><% } %>
+                        </div>
+
+                        <div class="payment-form__row">
+                            <div class="form-group<%= errors.card_expiry ? ' has-error' : '' %>">
+                                <label for="card_expiry">Срок</label>
+                                <input
+                                    type="text"
+                                    id="card_expiry"
+                                    name="card_expiry"
+                                    value="<%= values.card_expiry %>"
+                                    placeholder="ММ/ГГ"
+                                    autocomplete="cc-exp"
+                                    maxlength="5"
+                                    required
+                                >
+                                <% if (errors.card_expiry) { %><span class="field-error"><%= errors.card_expiry %></span><% } %>
+                            </div>
+
+                            <div class="form-group<%= errors.card_cvv ? ' has-error' : '' %>">
+                                <label for="card_cvv">CVV</label>
+                                <input
+                                    type="password"
+                                    id="card_cvv"
+                                    name="card_cvv"
+                                    value="<%= values.card_cvv %>"
+                                    placeholder="123"
+                                    inputmode="numeric"
+                                    autocomplete="cc-csc"
+                                    maxlength="3"
+                                    required
+                                >
+                                <% if (errors.card_cvv) { %><span class="field-error"><%= errors.card_cvv %></span><% } %>
+                            </div>
+                        </div>
+
+                        <div class="form-group<%= errors.card_holder ? ' has-error' : '' %>">
+                            <label for="card_holder">Держатель карты</label>
+                            <input
+                                type="text"
+                                id="card_holder"
+                                name="card_holder"
+                                value="<%= values.card_holder %>"
+                                placeholder="IVAN IVANOV"
+                                autocomplete="cc-name"
+                                required
+                            >
+                            <% if (errors.card_holder) { %><span class="field-error"><%= errors.card_holder %></span><% } %>
+                        </div>
+
+                        <button type="submit" class="btn-primary btn-full payment-submit">
+                            Оплатить <%= order.amount.toLocaleString('ru-RU') %> ₽
+                        </button>
+                    </form>
+                <% } else { %>
+                    <h2>Оплата через СБП</h2>
+                    <div class="payment-transfer payment-transfer--sbp">
+                        <p>Откройте приложение банка и переведите сумму по номеру телефона или QR-коду.</p>
+                        <dl class="payment-transfer__details">
+                            <dt>Получатель</dt>
+                            <dd>ООО «ЭлектроМаркет»</dd>
+                            <dt>Телефон для СБП</dt>
+                            <dd>+7 (900) 123-45-67</dd>
+                            <dt>Банк</dt>
+                            <dd>ПАО «Демо Банк»</dd>
+                            <dt>Сумма</dt>
+                            <dd><%= order.amount.toLocaleString('ru-RU') %> ₽</dd>
+                            <dt>Назначение</dt>
+                            <dd>Оплата заказа #<%= order.id %></dd>
+                        </dl>
+                        <form action="/payment/<%= order.id %>" method="POST">
+                            <input type="hidden" name="confirm_transfer" value="1">
+                            <button type="submit" class="btn-primary btn-full">Подтвердить оплату</button>
+                        </form>
+                    </div>
+                <% } %>
+
+                <p class="payment-secure">🔒 Соединение защищено. Данные карты не сохраняются на сервере.</p>
+            </section>
+
+            <aside class="payment-summary">
+                <h2>Сумма к оплате</h2>
+                <p class="payment-summary__amount"><%= order.amount.toLocaleString('ru-RU') %> ₽</p>
+                <ul class="payment-summary__list">
+                    <li><span>Заказ</span><strong>#<%= order.id %></strong></li>
+                    <li><span>Способ</span><strong><%= paymentLabel %></strong></li>
+                    <li><span>Статус</span><strong>Ожидает оплаты</strong></li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <% if (order.paymentMethod === 'card') { %>
+        <script src="/js/payment.js"></script>
+    <% } %>
+</body>
+</html>

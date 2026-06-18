@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('../partials/head', { extraCss: '/css/admin.css' }) %>
+</head>
+<body class="admin-body">
+
+    <%- include('../partials/admin-sidebar', { activeNav: isEdit ? 'products' : 'products' }) %>
+
+    <div class="admin-main">
+        <header class="admin-header">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Меню">☰</button>
+            <h1><%= isEdit ? 'Редактирование товара' : 'Новый товар' %></h1>
+            <a href="/admin#products" class="btn-admin-sm btn-admin-sm--ghost">← К списку</a>
+        </header>
+
+        <% if (errors.form) { %>
+            <div class="alert alert-error" role="alert"><%= errors.form %></div>
+        <% } %>
+
+        <section class="admin-form-card">
+            <form
+                class="admin-product-form"
+                action="<%= isEdit ? '/admin/products/' + productId : '/admin/products' %>"
+                method="POST"
+                novalidate
+            >
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--full<%= errors.name ? ' has-error' : '' %>">
+                        <label for="name">Название</label>
+                        <input type="text" id="name" name="name" value="<%= values.name %>" required maxlength="255">
+                        <% if (errors.name) { %><span class="field-error"><%= errors.name %></span><% } %>
+                    </div>
+
+                    <div class="form-group<%= errors.category_id ? ' has-error' : '' %>">
+                        <label for="category_id">Категория</label>
+                        <select id="category_id" name="category_id" required>
+                            <option value="">Выберите категорию</option>
+                            <% categories.forEach(function(category) { %>
+                                <option
+                                    value="<%= category.id %>"
+                                    <%= String(values.category_id) === String(category.id) ? 'selected' : '' %>
+                                ><%= category.name %></option>
+                            <% }) %>
+                        </select>
+                        <% if (errors.category_id) { %><span class="field-error"><%= errors.category_id %></span><% } %>
+                    </div>
+
+                    <div class="form-group<%= errors.brand ? ' has-error' : '' %>">
+                        <label for="brand">Бренд</label>
+                        <input type="text" id="brand" name="brand" value="<%= values.brand %>" maxlength="100" placeholder="Apple, Samsung...">
+                        <% if (errors.brand) { %><span class="field-error"><%= errors.brand %></span><% } %>
+                    </div>
+
+                    <div class="form-group<%= errors.price ? ' has-error' : '' %>">
+                        <label for="price">Цена, ₽</label>
+                        <input type="number" id="price" name="price" value="<%= values.price %>" min="0.01" step="0.01" required>
+                        <% if (errors.price) { %><span class="field-error"><%= errors.price %></span><% } %>
+                    </div>
+
+                    <div class="form-group<%= errors.stock_quantity ? ' has-error' : '' %>">
+                        <label for="stock_quantity">Остаток на складе</label>
+                        <input type="number" id="stock_quantity" name="stock_quantity" value="<%= values.stock_quantity %>" min="0" step="1" required>
+                        <% if (errors.stock_quantity) { %><span class="field-error"><%= errors.stock_quantity %></span><% } %>
+                    </div>
+
+                    <div class="form-group form-group--full<%= errors.image_url ? ' has-error' : '' %>">
+                        <label for="image_url">URL изображения</label>
+                        <input
+                            type="text"
+                            id="image_url"
+                            name="image_url"
+                            value="<%= values.image_url %>"
+                            placeholder="/images/products/iphone.svg"
+                        >
+                        <p class="form-hint">Путь к файлу в папке public, например /images/products/airpods.svg</p>
+                        <% if (errors.image_url) { %><span class="field-error"><%= errors.image_url %></span><% } %>
+                    </div>
+
+                    <div class="form-group form-group--full<%= errors.description ? ' has-error' : '' %>">
+                        <label for="description">Описание</label>
+                        <textarea id="description" name="description" rows="5" placeholder="Краткое описание товара"><%= values.description %></textarea>
+                        <% if (errors.description) { %><span class="field-error"><%= errors.description %></span><% } %>
+                    </div>
+
+                    <%- include('partials/product-specs-fields', { values: values, errors: errors }) %>
+                </div>
+
+                <div class="admin-form-actions">
+                    <button type="submit" class="btn-admin-primary"><%= isEdit ? 'Сохранить изменения' : 'Добавить товар' %></button>
+                    <a href="/admin#products" class="btn-admin-sm btn-admin-sm--ghost">Отмена</a>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <script src="/js/admin-product-specs.js"></script>
+</body>
+</html>

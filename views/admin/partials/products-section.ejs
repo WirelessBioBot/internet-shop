@@ -1,0 +1,103 @@
+<section class="admin-section" id="products">
+    <div class="admin-section__head">
+        <h2>Товары</h2>
+        <a href="/admin/products/new" class="btn-admin-primary">Добавить товар</a>
+    </div>
+
+    <form method="GET" action="/admin#products" class="admin-filters">
+        <%- include('filter-hidden', { filters: filters, section: 'product' }) %>
+        <div class="admin-filters__grid">
+            <div class="admin-filters__field">
+                <label for="product_q">Поиск</label>
+                <input
+                    type="search"
+                    id="product_q"
+                    name="product_q"
+                    value="<%= filters.productQ %>"
+                    placeholder="Название или бренд"
+                >
+            </div>
+            <div class="admin-filters__field">
+                <label for="product_category">Категория</label>
+                <select id="product_category" name="product_category">
+                    <option value="">Все категории</option>
+                    <% categories.forEach(function(category) { %>
+                        <option
+                            value="<%= category.id %>"
+                            <%= String(filters.productCategory) === String(category.id) ? 'selected' : '' %>
+                        ><%= category.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="admin-filters__field">
+                <label for="product_stock">Остаток</label>
+                <select id="product_stock" name="product_stock">
+                    <option value="" <%= !filters.productStock ? 'selected' : '' %>>Любой</option>
+                    <option value="in" <%= filters.productStock === 'in' ? 'selected' : '' %>>В наличии</option>
+                    <option value="low" <%= filters.productStock === 'low' ? 'selected' : '' %>>Мало (≤ 5)</option>
+                    <option value="out" <%= filters.productStock === 'out' ? 'selected' : '' %>>Нет в наличии</option>
+                </select>
+            </div>
+        </div>
+        <div class="admin-filters__actions">
+            <button type="submit" class="btn-admin-sm">Применить</button>
+            <a href="<%= productResetUrl %>" class="btn-admin-sm btn-admin-sm--ghost">Сбросить</a>
+        </div>
+    </form>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table admin-table--products">
+            <thead>
+                <tr>
+                    <th>Фото</th>
+                    <th>Название</th>
+                    <th>Категория</th>
+                    <th>Цена</th>
+                    <th>Остаток</th>
+                    <th>Рейтинг</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (products.length) { %>
+                    <% products.forEach(function(product) { %>
+                        <tr>
+                            <td>
+                                <img
+                                    src="<%= product.imageUrl %>"
+                                    alt=""
+                                    class="admin-product-thumb"
+                                    width="48"
+                                    height="48"
+                                    loading="lazy"
+                                    onerror="this.onerror=null;this.src='/images/placeholder.svg'"
+                                >
+                            </td>
+                            <td>
+                                <strong><%= product.name %></strong>
+                                <% if (product.brand !== '—') { %>
+                                    <br><small><%= product.brand %></small>
+                                <% } %>
+                            </td>
+                            <td><%= product.categoryName %></td>
+                            <td><%= product.price.toLocaleString('ru-RU') %> ₽</td>
+                            <td>
+                                <span class="badge <%= product.stockQuantity <= 5 ? 'badge-stock-low' : 'badge-stock-ok' %>">
+                                    <%= product.stockQuantity %> шт.
+                                </span>
+                            </td>
+                            <td><%= product.rating.toFixed(1) %></td>
+                            <td class="admin-table-actions">
+                                <a href="/admin/products/<%= product.id %>/edit" class="btn-admin-sm btn-admin-sm--ghost">Изменить</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" class="admin-empty">Товары не найдены</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</section>

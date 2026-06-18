@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="container checkout-page">
+        <header class="page-head checkout-page__head">
+            <div>
+                <span class="section-label">Оформление</span>
+                <h1>Оформление заказа</h1>
+                <p class="page-head__desc"><%= items.length %> <%= ruPlural(items.length, 'товар', 'товара', 'товаров') %> · <%= total.toLocaleString('ru-RU') %> ₽</p>
+            </div>
+        </header>
+
+        <% if (errors.form) { %>
+            <div class="alert alert-error" role="alert"><%= errors.form %></div>
+        <% } %>
+
+        <div class="checkout-layout">
+            <section class="checkout-summary">
+                <h2>Ваш заказ</h2>
+                <ul class="checkout-items">
+                    <% items.forEach(function(item) { %>
+                        <li class="checkout-item">
+                            <img src="<%= item.image %>" alt="<%= item.name %>">
+                            <div class="checkout-item__info">
+                                <strong><%= item.name %></strong>
+                                <p><%= item.quantity %> × <%= item.price.toLocaleString('ru-RU') %> ₽</p>
+                            </div>
+                            <span class="checkout-item__sum"><%= item.subtotal.toLocaleString('ru-RU') %> ₽</span>
+                        </li>
+                    <% }) %>
+                </ul>
+                <p class="checkout-total">Итого: <strong><%= total.toLocaleString('ru-RU') %> ₽</strong></p>
+            </section>
+
+            <section class="checkout-form-section">
+                <form class="checkout-form" action="/checkout" method="POST" novalidate>
+                    <div class="checkout-form-card">
+                        <div class="checkout-form-card__head">
+                            <span class="checkout-form-card__icon" aria-hidden="true">👤</span>
+                            <div>
+                                <h3>Контактные данные</h3>
+                                <p>Укажите, как с вами связаться по заказу</p>
+                            </div>
+                        </div>
+
+                        <div class="checkout-form-grid checkout-form-grid--2">
+                            <div class="form-group form-group--full<%= errors.contact_name ? ' has-error' : '' %>">
+                                <label for="contact_name">Имя получателя</label>
+                                <input
+                                    type="text"
+                                    id="contact_name"
+                                    name="contact_name"
+                                    value="<%= values.contact_name %>"
+                                    required
+                                    maxlength="100"
+                                    autocomplete="name"
+                                >
+                                <% if (errors.contact_name) { %><span class="field-error"><%= errors.contact_name %></span><% } %>
+                            </div>
+
+                            <div class="form-group<%= errors.email ? ' has-error' : '' %>">
+                                <label for="email">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value="<%= values.email %>"
+                                    required
+                                    maxlength="255"
+                                    autocomplete="email"
+                                >
+                                <% if (errors.email) { %><span class="field-error"><%= errors.email %></span><% } %>
+                            </div>
+
+                            <div class="form-group<%= errors.phone ? ' has-error' : '' %>">
+                                <label for="phone">Телефон</label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    value="<%= values.phone %>"
+                                    placeholder="+7 (900) 123-45-67"
+                                    required
+                                    maxlength="20"
+                                    autocomplete="tel"
+                                >
+                                <% if (errors.phone) { %><span class="field-error"><%= errors.phone %></span><% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-form-card">
+                        <div class="checkout-form-card__head">
+                            <span class="checkout-form-card__icon" aria-hidden="true">📦</span>
+                            <div>
+                                <h3>Доставка</h3>
+                                <p>Выберите способ получения заказа</p>
+                            </div>
+                        </div>
+
+                        <fieldset class="delivery-methods<%= errors.delivery_method ? ' has-error' : '' %>">
+                            <legend class="visually-hidden">Способ доставки</legend>
+                            <label class="choice-card">
+                                <input
+                                    type="radio"
+                                    name="delivery_method"
+                                    value="address"
+                                    <%= values.delivery_method !== 'cdek' ? 'checked' : '' %>
+                                >
+                                <span class="choice-card__body">
+                                    <strong>Курьером по адресу</strong>
+                                    <small>Доставка до двери в удобное время</small>
+                                </span>
+                            </label>
+                            <label class="choice-card">
+                                <input
+                                    type="radio"
+                                    name="delivery_method"
+                                    value="cdek"
+                                    <%= values.delivery_method === 'cdek' ? 'checked' : '' %>
+                                >
+                                <span class="choice-card__body">
+                                    <strong>Пункт выдачи СДЕК</strong>
+                                    <small>Заберите заказ в ближайшем ПВЗ</small>
+                                </span>
+                            </label>
+                        </fieldset>
+                        <% if (errors.delivery_method) { %><span class="field-error"><%= errors.delivery_method %></span><% } %>
+
+                        <div class="delivery-fields" id="delivery-address-block" <%= values.delivery_method === 'cdek' ? 'hidden' : '' %>>
+                            <div class="form-group<%= errors.delivery_address ? ' has-error' : '' %>">
+                                <label for="delivery_address">Адрес доставки</label>
+                                <input
+                                    type="text"
+                                    id="delivery_address"
+                                    name="delivery_address"
+                                    value="<%= values.delivery_address %>"
+                                    placeholder="Например: Москва, ул. Тверская, 12, кв. 45"
+                                    maxlength="255"
+                                    autocomplete="street-address"
+                                    <%= values.delivery_method !== 'cdek' ? 'required' : '' %>
+                                >
+                                <p class="form-hint">Укажите город, улицу, дом, квартиру, подъезд и этаж</p>
+                                <% if (errors.delivery_address) { %><span class="field-error"><%= errors.delivery_address %></span><% } %>
+                            </div>
+                        </div>
+
+                        <div class="delivery-fields" id="delivery-cdek-block" <%= values.delivery_method === 'cdek' ? '' : 'hidden' %>>
+                            <div class="form-group<%= errors.cdek_point ? ' has-error' : '' %>">
+                                <label for="cdek_point">Пункт выдачи СДЕК</label>
+                                <input
+                                    type="text"
+                                    id="cdek_point"
+                                    name="cdek_point"
+                                    value="<%= values.cdek_point %>"
+                                    placeholder="Например: Москва, ул. Тверская, 12 (ПВЗ СДЕК)"
+                                    maxlength="255"
+                                    <%= values.delivery_method === 'cdek' ? 'required' : '' %>
+                                >
+                                <p class="form-hint">Укажите город, адрес или код пункта выдачи из карты СДЕК</p>
+                                <% if (errors.cdek_point) { %><span class="field-error"><%= errors.cdek_point %></span><% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-form-card">
+                        <div class="checkout-form-card__head">
+                            <span class="checkout-form-card__icon" aria-hidden="true">💳</span>
+                            <div>
+                                <h3>Способ оплаты</h3>
+                                <p>Выберите удобный вариант оплаты</p>
+                            </div>
+                        </div>
+
+                        <fieldset class="payment-methods<%= errors.payment_method ? ' has-error' : '' %>">
+                            <legend class="visually-hidden">Способ оплаты</legend>
+                            <% Object.keys(paymentLabels).forEach(function(key) { %>
+                                <label class="choice-card choice-card--payment">
+                                    <input
+                                        type="radio"
+                                        name="payment_method"
+                                        value="<%= key %>"
+                                        <%= values.payment_method === key ? 'checked' : '' %>
+                                        required
+                                    >
+                                    <span class="choice-card__body">
+                                        <strong><%= paymentLabels[key] %></strong>
+                                        <% if (key === 'card') { %>
+                                            <small>Visa, Mastercard, Мир</small>
+                                        <% } else if (key === 'cash') { %>
+                                            <small>При получении заказа</small>
+                                        <% } else if (key === 'sbp') { %>
+                                            <small>Оплата через Систему быстрых платежей</small>
+                                        <% } %>
+                                    </span>
+                                </label>
+                            <% }) %>
+                            <% if (errors.payment_method) { %><span class="field-error"><%= errors.payment_method %></span><% } %>
+                        </fieldset>
+                    </div>
+
+                    <div class="checkout-form-actions">
+                        <button type="submit" class="btn-primary btn-full checkout-submit">Подтвердить заказ</button>
+                        <a href="/cart" class="checkout-back">Вернуться в корзину</a>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/checkout.js"></script>
+</body>
+</html>

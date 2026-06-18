@@ -1,0 +1,24 @@
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=online_store_db
+DB_USER=admin
+DB_PASSWORD=admin123
+SESSION_SECRET=change-me-in-production
+
+# Базовый URL сайта (для ссылок в письмах)
+APP_URL=http://localhost:3000
+
+# SMTP для отправки писем (если не задано — ссылка выводится в консоль сервера)
+# SMTP_HOST=smtp.example.com
+# SMTP_PORT=587
+# SMTP_SECURE=false
+# SMTP_USER=
+# SMTP_PASS=
+# SMTP_FROM="ЭлектроМаркет" <no-reply@electromarket.ru>
+
+# ID пользователя для демо-рекомендаций (выводится после npm run db:seed)
+DEMO_USER_ID=
+
+# Recommendation Service (FastAPI)
+RECOMMENDATION_SERVICE_URL=http://localhost:8000
+RECOMMENDATION_TIMEOUT_MS=5000

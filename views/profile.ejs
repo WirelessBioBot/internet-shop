@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <%- include('partials/head') %>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="container profile-page">
+        <header class="page-head profile-page__head">
+            <div>
+                <span class="section-label">Личный кабинет</span>
+                <h1>Личный профиль</h1>
+                <p class="page-head__desc">Здравствуйте, <%= user.name %>!</p>
+            </div>
+        </header>
+
+        <% if (typeof flash !== 'undefined' && flash && flash.type !== 'success') { %>
+            <div class="alert alert-<%= flash.type %>" role="alert"><%= flash.message %></div>
+        <% } %>
+
+        <div class="profile-layout">
+            <aside class="profile-sidebar">
+                <div class="profile-form-card" id="contacts">
+                    <div class="profile-form-card__head">
+                        <span class="profile-form-card__icon" aria-hidden="true">👤</span>
+                        <div>
+                            <h2>Контактные данные</h2>
+                            <p>Имя, email и телефон для заказов</p>
+                        </div>
+                    </div>
+
+                    <form class="profile-form" action="/profile/contacts" method="POST" novalidate>
+                        <div class="form-group<%= contactErrors.name ? ' has-error' : '' %>">
+                            <label for="profile_name">Имя</label>
+                            <input
+                                type="text"
+                                id="profile_name"
+                                name="name"
+                                value="<%= user.name %>"
+                                required
+                                maxlength="100"
+                                autocomplete="name"
+                            >
+                            <% if (contactErrors.name) { %><span class="field-error"><%= contactErrors.name %></span><% } %>
+                        </div>
+
+                        <div class="form-group<%= contactErrors.email ? ' has-error' : '' %>">
+                            <label for="profile_email">Email</label>
+                            <input
+                                type="email"
+                                id="profile_email"
+                                name="email"
+                                value="<%= user.email %>"
+                                required
+                                maxlength="255"
+                                autocomplete="email"
+                            >
+                            <% if (contactErrors.email) { %><span class="field-error"><%= contactErrors.email %></span><% } %>
+                        </div>
+
+                        <div class="form-group<%= contactErrors.phone ? ' has-error' : '' %>">
+                            <label for="profile_phone">Телефон</label>
+                            <input
+                                type="tel"
+                                id="profile_phone"
+                                name="phone"
+                                value="<%= user.phone %>"
+                                placeholder="+7 (900) 123-45-67"
+                                maxlength="20"
+                                autocomplete="tel"
+                            >
+                            <% if (contactErrors.phone) { %><span class="field-error"><%= contactErrors.phone %></span><% } %>
+                        </div>
+
+                        <% if (contactErrors.form) { %>
+                            <div class="alert alert-error" role="alert"><%= contactErrors.form %></div>
+                        <% } %>
+
+                        <button type="submit" class="btn-primary btn-full">Сохранить изменения</button>
+                    </form>
+                </div>
+
+                <div class="profile-form-card" id="password">
+                    <div class="profile-form-card__head">
+                        <span class="profile-form-card__icon" aria-hidden="true">🔒</span>
+                        <div>
+                            <h2>Смена пароля</h2>
+                            <p>Обновите пароль для входа в аккаунт</p>
+                        </div>
+                    </div>
+
+                    <form class="profile-form" action="/profile/password" method="POST" novalidate>
+                        <div class="form-group<%= passwordErrors.current_password ? ' has-error' : '' %>">
+                            <label for="current_password">Текущий пароль</label>
+                            <input
+                                type="password"
+                                id="current_password"
+                                name="current_password"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <% if (passwordErrors.current_password) { %><span class="field-error"><%= passwordErrors.current_password %></span><% } %>
+                        </div>
+
+                        <div class="form-group<%= passwordErrors.new_password ? ' has-error' : '' %>">
+                            <label for="new_password">Новый пароль</label>
+                            <input
+                                type="password"
+                                id="new_password"
+                                name="new_password"
+                                required
+                                minlength="8"
+                                autocomplete="new-password"
+                            >
+                            <% if (passwordErrors.new_password) { %><span class="field-error"><%= passwordErrors.new_password %></span><% } %>
+                        </div>
+
+                        <div class="form-group<%= passwordErrors.new_password_confirm ? ' has-error' : '' %>">
+                            <label for="new_password_confirm">Подтверждение пароля</label>
+                            <input
+                                type="password"
+                                id="new_password_confirm"
+                                name="new_password_confirm"
+                                required
+                                minlength="8"
+                                autocomplete="new-password"
+                            >
+                            <% if (passwordErrors.new_password_confirm) { %><span class="field-error"><%= passwordErrors.new_password_confirm %></span><% } %>
+                        </div>
+
+                        <% if (passwordErrors.form) { %>
+                            <div class="alert alert-error" role="alert"><%= passwordErrors.form %></div>
+                        <% } %>
+
+                        <button type="submit" class="btn-secondary btn-full">Изменить пароль</button>
+                    </form>
+                </div>
+
+                <div class="profile-sidebar-actions">
+                    <a href="/favorites" class="btn-secondary btn-full">Избранное</a>
+                    <a href="/cart" class="btn-secondary btn-full">Перейти в корзину</a>
+                    <a href="/logout" class="btn-logout btn-full">Выйти из аккаунта</a>
+                </div>
+            </aside>
+
+            <section class="profile-orders" id="orders">
+                <div class="profile-orders-section">
+                    <div class="profile-orders-section__head">
+                        <h2>Текущие заказы</h2>
+                        <span class="profile-orders-count"><%= currentOrders.length %></span>
+                    </div>
+
+                    <% if (!currentOrders.length) { %>
+                        <div class="profile-orders-empty">
+                            <p>У вас нет активных заказов</p>
+                            <a href="/catalog" class="btn-primary">Перейти в каталог</a>
+                        </div>
+                    <% } else { %>
+                        <ul class="profile-orders-list">
+                            <% currentOrders.forEach(function(order) { %>
+                                <li class="profile-order-card profile-order-card--current">
+                                    <div class="profile-order-card__top">
+                                        <div>
+                                            <span class="profile-order-card__id">Заказ #<%= order.id %></span>
+                                            <span class="profile-order-card__date"><%= order.createdAt %></span>
+                                        </div>
+                                        <strong class="profile-order-card__amount"><%= order.totalAmount.toLocaleString('ru-RU') %> ₽</strong>
+                                    </div>
+
+                                    <div class="profile-order-delivery">
+                                        <div class="profile-order-delivery__stage profile-order-delivery__stage--<%= order.deliveryStage.key %>">
+                                            <span class="profile-order-delivery__dot" aria-hidden="true"></span>
+                                            <%= order.deliveryStage.label %>
+                                        </div>
+                                        <% if (order.deliveryDate) { %>
+                                            <p class="profile-order-delivery__date">
+                                                Ожидаемая доставка: <strong><%= order.deliveryDate %></strong>
+                                            </p>
+                                        <% } %>
+                                    </div>
+
+                                    <ul class="profile-order-items">
+                                        <% order.items.forEach(function(item) { %>
+                                            <li>
+                                                <span><%= item.name %></span>
+                                                <span><%= item.quantity %> шт. · <%= item.subtotal.toLocaleString('ru-RU') %> ₽</span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+
+                                    <div class="profile-order-card__meta">
+                                        <span><%= order.paymentMethod %></span>
+                                        <span><%= order.paymentStatusLabel %></span>
+                                    </div>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } %>
+                </div>
+
+                <div class="profile-orders-section">
+                    <div class="profile-orders-section__head">
+                        <h2>Завершённые заказы</h2>
+                        <span class="profile-orders-count"><%= completedOrders.length %></span>
+                    </div>
+
+                    <% if (!completedOrders.length) { %>
+                        <div class="profile-orders-empty profile-orders-empty--muted">
+                            <p>Завершённых заказов пока нет</p>
+                        </div>
+                    <% } else { %>
+                        <ul class="profile-orders-list">
+                            <% completedOrders.forEach(function(order) { %>
+                                <li class="profile-order-card profile-order-card--completed">
+                                    <div class="profile-order-card__top">
+                                        <div>
+                                            <span class="profile-order-card__id">Заказ #<%= order.id %></span>
+                                            <span class="profile-order-card__date"><%= order.createdAt %></span>
+                                        </div>
+                                        <span class="profile-order-status profile-order-status--<%= order.status %>">
+                                            <%= order.statusLabel %>
+                                        </span>
+                                    </div>
+
+                                    <ul class="profile-order-items">
+                                        <% order.items.forEach(function(item) { %>
+                                            <li>
+                                                <span><%= item.name %></span>
+                                                <span><%= item.quantity %> шт. · <%= item.subtotal.toLocaleString('ru-RU') %> ₽</span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+
+                                    <div class="profile-order-card__footer">
+                                        <strong><%= order.totalAmount.toLocaleString('ru-RU') %> ₽</strong>
+                                        <span><%= order.paymentMethod %> · <%= order.paymentStatusLabel %></span>
+                                    </div>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } %>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <% if (formSection) { %>
+        <script>
+            document.getElementById('<%= formSection %>')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        </script>
+    <% } %>
+</body>
+</html>
